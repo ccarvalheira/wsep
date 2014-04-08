@@ -8,7 +8,19 @@ from apps.archives.models import Archive
 from apps.campaign.api import DatasetMetaResource
 from apps.campaign.api import CampaignResource
 
-class MultipartResource(object):
+class ArchiveResource(ModelResource):
+    dataset = fields.ForeignKey(DatasetMetaResource, "dataset", blank=True, null=True)
+    campaign = fields.ForeignKey(CampaignResource, "campaign", blank=True, null=True)
+    
+    file_field = fields.FileField(attribute="file_field")
+
+    class Meta:
+        queryset = Archive.objects.all()
+        resource_name = 'archive'
+        authorization = Authorization()
+        
+        #fields = ["file_field", "name"]
+    
     def deserialize(self, request, data, format=None):
         if not format:
             format = request.META.get('CONTENT_TYPE', 'application/json')
@@ -22,20 +34,7 @@ class MultipartResource(object):
             data.update(request.FILES)
 
             return data
-
-        return super(MultipartResource, self).deserialize(request, data, format)
-
-class ArchiveResource(MultipartResource, ModelResource):
-    dataset = fields.ForeignKey(DatasetMetaResource, "datasetmeta", blank=True, null=True)
-    campaign = fields.ForeignKey(CampaignResource, "campaign", blank=True, null=True)
-    
-    file_field = fields.FileField(attribute="file_field")
-
-    class Meta:
-        queryset = Archive.objects.all()
-        resource_name = 'archive'
-        authorization = Authorization()
         
-        fields = ["file_field", "name"]
+        return super(ArchiveResource, self).deserialize(request, data, format)
 
 

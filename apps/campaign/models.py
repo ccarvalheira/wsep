@@ -36,11 +36,15 @@ class Event(ResearchObject):
     
 class Dataset(ResearchObject):
     """ The blueprint for the incoming time series data. """
-    campaign = models.ForeignKey("Campaign",)
-    template = models.ForeignKey("dataviewer.BaseTemplate")
+    campaign = models.ForeignKey("Campaign")
+    dimensions = models.ManyToManyField("dataviewer.Dimension")
     highest_ts = models.CharField(max_length=50, blank=True, null=True)
     lowest_ts = models.CharField(max_length=50, blank=True, null=True)
     devices = models.ManyToManyField("Device")
+    datapoint_count = models.PositiveIntegerField(default=0)
+    published = models.BooleanField(default=False)
+    
+    datapoints_per_bucket = 10000
     
     def __unicode__(self):
         return self.name
@@ -52,6 +56,12 @@ class Dataset(ResearchObject):
     
     def get_base_columns(self):
         return [d.cassandra_column for d in self.template.dimensions.exclude(cassandra_column="id")]
+    
+    def get_bucket_list(self):
+        return ["'"+str(self.id)+"-"+str(c)+"'" for c in xrange(1+(self.datapoint_count/self.datapoints_per_bucket))]
+        
+    def get_str_bucket_list(self):
+        return ",".join(self.get_bucket_list())
 
 
 class Device(ResearchObject):

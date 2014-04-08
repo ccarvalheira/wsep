@@ -21,6 +21,6 @@ atlassian-ide-plugin.xml
 *.db
 
 #Environment file
-#.env
+.env
 
 edit.sh

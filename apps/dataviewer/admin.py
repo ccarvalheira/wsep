@@ -10,6 +10,10 @@ from apps.dataviewer.models import Filter
 #from apps.dataviewer.models import Datatype
 #from apps.dataviewer.models import Workflow
 
+from apps.jobs.models import Task
+
+class TaskAdmin(admin.ModelAdmin):
+    pass
 
 class AggregatorAdmin(admin.ModelAdmin):
     pass
@@ -59,4 +63,6 @@ admin.site.register(Dimension, DimensionAdmin)
 
 
 admin.site.register(Filter, FilterAdmin)
+
+admin.site.register(Task, TaskAdmin)
 

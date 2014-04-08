@@ -10,15 +10,17 @@ class WSUser(AbstractUser, ResearchObject):
     #last_name = models.CharField(max_length=100)
     affiliation = models.CharField(max_length=100, null=True, blank=True)
 
-class Permission(models.Model):
+class CPermission(models.Model):
     object_type = models.CharField(max_length=100)
     object_id = models.IntegerField()
     object_url = models.TextField()
     user = models.ForeignKey(WSUser, related_name="my_permissions")
-    owner = models.ForeignKey(WSUser, related_name="owns")
-    read = models.BooleanField()
-    update = models.BooleanField()
-    delete = models.BooleanField()
+    owner = models.BooleanField(default=False)
+    read = models.BooleanField(default=False)
+    update = models.BooleanField(default=False)
+    delete = models.BooleanField(default=False)
+
+
 
 
 #class Comment(models.Model):

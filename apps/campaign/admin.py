@@ -5,7 +5,10 @@ from apps.campaign.models import Dataset
 from apps.campaign.models import Event
 from apps.campaign.models import Campaign
 from apps.campaign.models import Site
+from apps.campaign.models import Device
 
+class DeviceAdmin(admin.ModelAdmin):
+    pass
 
 
 class SiteAdmin(admin.ModelAdmin):
@@ -46,6 +49,8 @@ admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(Event, EventAdmin)
 
 admin.site.register(Site, SiteAdmin)
+
+admin.site.register(Device, DeviceAdmin)
 
 
 

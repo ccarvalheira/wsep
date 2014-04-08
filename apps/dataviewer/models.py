@@ -3,8 +3,10 @@ from django.db import models
 from apps.researchobjects.models import ResearchObject
 
 CASSANDRA_DATATYPE_CHOICES = (
-    ("dec","Decimal"),
-    
+    ("decimal","Decimal"),
+    ("double","Double"),
+    ("text","Array"),
+    ("text","Text"),
 )
 
 

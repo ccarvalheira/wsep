@@ -15,10 +15,19 @@ from apps.campaign.api import DeviceResource
 from apps.archives.api import ArchiveResource
 
 from apps.dataviewer.api import DimensionResource
+from apps.dataviewer.api import DatapointResource
 from apps.dataviewer.api import BaseTemplateResource
 from apps.dataviewer.api import AggregatorResource
 from apps.dataviewer.api import CalculatorResource
 from apps.dataviewer.api import FilterResource
+
+from apps.tripleapi.api import GraphResource
+from apps.tripleapi.api import TripleResource
+from apps.tripleapi.api import LiteralStatementResource
+
+from apps.jobs.api import TaskResource
+from apps.jobs.api import TaskUpdateResource
+#from apps.jobs.api import OrderedTaskResource
 
 
 from tastypie.api import Api
@@ -36,10 +45,19 @@ v1_api.register(DeviceResource())
 v1_api.register(ArchiveResource())
 
 v1_api.register(DimensionResource())
-v1_api.register(BaseTemplateResource())
+#v1_api.register(BaseTemplateResource())
 v1_api.register(AggregatorResource())
 v1_api.register(CalculatorResource())
 v1_api.register(FilterResource())
+v1_api.register(DatapointResource())
+
+v1_api.register(GraphResource())
+v1_api.register(TripleResource())
+#v1_api.register(LiteralStatementResource())
+
+v1_api.register(TaskResource())
+v1_api.register(TaskUpdateResource())
+#v1_api.register(OrderedTaskResource())
 
 
 

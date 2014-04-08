@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve, get_script_prefix
 from django.contrib.auth.hashers import make_password
 
 from apps.wsusers.models import WSUser
-from apps.wsusers.models import Permission
+from apps.wsusers.models import CPermission
 
 from apps import *
 
@@ -28,12 +28,17 @@ class WSUserResource(ModelResource):
         bundle.data["password"] = make_password(bundle.data["password"])
         return bundle
 
+
+
 class PermissionResource(ModelResource):
+    user = fields.ForeignKey(WSUserResource, "user")
     class Meta:
-        queryset = Permission.objects.all()
+        queryset = CPermission.objects.all()
         resource_name = "permission"
         authorization = Authorization()
         #excludes = ["object_type", "object_id"]
+    
+    
     
     def get_pk_from_uri(self, uri):
         prefix = get_script_prefix()
@@ -48,6 +53,7 @@ class PermissionResource(ModelResource):
             raise NotFound("The URL provided '%s' was not a link to a valid resource." % uri)
 
         return kwargs["pk"], kwargs["resource_name"]
+    
     
     def hydrate_object_type(self, bundle):
         

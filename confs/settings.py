@@ -56,6 +56,7 @@ INSTALLED_APPS = (
 #	'debug_toolbar',
 #	'rest_framework',
 	'rdflib_django',
+	'apps.wsadmin',
 #	'django_statsd',
 	
 )
