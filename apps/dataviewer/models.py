@@ -13,7 +13,7 @@ CASSANDRA_DATATYPE_CHOICES = (
 
 class Dimension(ResearchObject):
     units = models.CharField(max_length=20,)
-    datatype = models.CharField(max_length=5, choices=CASSANDRA_DATATYPE_CHOICES)
+    datatype = models.CharField(max_length=10, choices=CASSANDRA_DATATYPE_CHOICES)
     ts_column = models.CharField(max_length=50,)
     
     

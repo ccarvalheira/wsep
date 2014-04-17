@@ -15,7 +15,7 @@ class CassandraNode(Node):
     @classmethod
     def get_nodeip_list(self):
         node_list = [c.ip for c in self.objects.all()[:5]]
-        return ["192.168.186.192"]
+        return ["127.0.0.1"]
 
 class APINode(Node):
     pass
@@ -28,6 +28,6 @@ class GearmanNode(Node):
     @classmethod
     def get_nodeip_list(self):
         node_list = [g.ip for g in self.objects.filter(state=True)[:5]]
-        return ["192.168.186.192"]
+        return ["127.0.0.1"]
 
 
