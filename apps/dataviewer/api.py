@@ -18,7 +18,7 @@ from apps.campaign.api import DatasetMetaResource
 
 from apps.dataviewer.models import CASSANDRA_DATATYPE_CHOICES
 
-
+import time
 import random
 import string
 
@@ -97,7 +97,11 @@ class DatapointResource(Resource):
         #    if d not in idim_l:
         #        raise Exception("not enough input dims")
         node_list = CassandraNode.get_nodeip_list()
-        cluster = Cluster(node_list)
+        try:
+            cluster = Cluster(node_list)
+        except Exception:
+            time.sleep(1)
+            cluster = Cluster(node_list)
         session = cluster.connect('ws')
         columns = ",".join([str(i.ts_column) for i in idim_l])
         values = ",".join([str(i.input_value) for i in idim_l])

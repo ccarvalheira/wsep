@@ -57,7 +57,7 @@ INSTALLED_APPS = (
 #	'rest_framework',
 	'rdflib_django',
 	'apps.wsadmin',
-#	'django_statsd',
+	'django_statsd',
 	
 )
 
@@ -67,8 +67,9 @@ AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
 AUTH_USER_MODEL = "wsusers.WSUser"
 
 MIDDLEWARE_CLASSES = (
-	#'django_statsd.middleware.GraphiteRequestTimingMiddleware',
-    #'django_statsd.middleware.GraphiteMiddleware',
+	'django_statsd.middleware.GraphiteRequestTimingMiddleware',
+    'django_statsd.middleware.GraphiteMiddleware',
+    'django_statsd.middleware.TastyPieRequestTimingMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -84,7 +85,7 @@ MIDDLEWARE_CLASSES = (
 
 STATSD_CLIENT = 'django_statsd.clients.normal'
 
-STATSD_HOST = '192.168.186.187'
+STATSD_HOST = '10.0.3.150'
 STATSD_PORT = 8125
 STATSD_PREFIX = None
 STATSD_MAXUDPSIZE = 512

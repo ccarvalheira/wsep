@@ -22,4 +22,5 @@ EOF
 cd /home/ubuntu/ws_client
 . env/bin/activate
 cd ws_client
-python structure.py
+python initter.py
+
