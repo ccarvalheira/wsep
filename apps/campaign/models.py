@@ -6,8 +6,8 @@ from apps.dataviewer.models import Calculator
 
 class Campaign(ResearchObject):
     """ Catchall grouping of Datasets. The BL may use this to group Datasets as they desire. """
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True,null=True,)
+    start_date = models.DateField(blank=True, null=True, help_text="Date. Start date of this campaign.")
+    end_date = models.DateField(blank=True,null=True, help_text="Date. End date of this campaign.")
     site = models.ForeignKey("Site",blank=True,null=True,)
     #owner = models.ForeignKey("wsusers.WSUser")
   
@@ -19,16 +19,16 @@ class Campaign(ResearchObject):
 
     
 class Site(ResearchObject):
-    """ Geographic site. A MeasurementSet may or may not be associated with a Site """
-    location = models.CharField(blank=True,null=True,max_length=100,)
+    """ Geographic site. """
+    location = models.CharField(blank=True,null=True,max_length=100,help_text="Unicode string data. The location of the Site.")
     
     def __unicode__(self):
         return self.name
     
 class Event(ResearchObject):
-    """ A generic object that records an event that hapened related to a given MeasurementSet """
-    start = models.DateTimeField(blank=True, null=True)
-    end = models.DateTimeField(blank=True, null=True)
+    """ A generic object that records an event that happened related to a given Campaign """
+    start = models.DateTimeField(blank=True, null=True, help_text="Datetime. Start datetime for this event.")
+    end = models.DateTimeField(blank=True, null=True, help_text="Datetime. End datetime for this event.")
     campaign = models.ForeignKey("Campaign",)
     
     def __unicode__(self):
@@ -38,11 +38,11 @@ class Dataset(ResearchObject):
     """ The blueprint for the incoming time series data. """
     campaign = models.ForeignKey("Campaign")
     dimensions = models.ManyToManyField("dataviewer.Dimension")
-    highest_ts = models.CharField(max_length=50, blank=True, null=True)
-    lowest_ts = models.CharField(max_length=50, blank=True, null=True)
+    highest_ts = models.CharField(max_length=50, blank=True, null=True, help_text="Unicode string data. Upper timestamp bound from which to filter this dataset.")
+    lowest_ts = models.CharField(max_length=50, blank=True, null=True, help_text="Unicode string data. Lower timestamp bound from which to filter this dataset.")
     devices = models.ManyToManyField("Device")
-    datapoint_count = models.PositiveIntegerField(default=0)
-    published = models.BooleanField(default=False)
+    datapoint_count = models.PositiveIntegerField(default=0, help_text="Positive integer. Datapoint count for this particular dataset.")
+    published = models.BooleanField(default=False, help_text="Boolean. Whether this dataset is published or not.")
     
     datapoints_per_bucket = 10000
     

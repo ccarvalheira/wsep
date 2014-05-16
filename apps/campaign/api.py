@@ -16,24 +16,28 @@ from apps.wsadmin.models import CassandraNode
 
 from cassandra.cluster import Cluster
 
-
+####
 """ We define this here so SiteResource can use it. The real definition is below. """
 class CampaignResource(ModelResource):
     class Meta:
         queryset = Campaign.objects.all()
         resource_name = 'campaign'
         authorization = Authorization()
-    
+####
+
+
 class SiteResource(ModelResource):
+    """ Geographic site in which Campaigns are carried out. """
     campaigns = fields.ToManyField(CampaignResource, "campaign_set", null=True, blank=True)
     class Meta:
         queryset = Site.objects.all()
         resource_name = "site"
         authorization = Authorization()
-
+        
 
 """ Real definition of CampaignResource. """
 class CampaignResource(ModelResource):
+    """ A Campaign that is carried out in a Site and has a number of related Datasets. """
     site = fields.ForeignKey(SiteResource, "site", null=True, blank=True)
     class Meta:
         queryset = Campaign.objects.all()
@@ -72,6 +76,8 @@ class DatasetMetaResource(ModelResource):
         #excludes = ["highest_ts", "lowest_ts"]
         
         filtering = {"site": ALL}
+        
+        
     
     def obj_create(self, bundle, **kwargs):
         

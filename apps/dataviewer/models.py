@@ -12,9 +12,9 @@ CASSANDRA_DATATYPE_CHOICES = (
 
 
 class Dimension(ResearchObject):
-    units = models.CharField(max_length=20,)
-    datatype = models.CharField(max_length=10, choices=CASSANDRA_DATATYPE_CHOICES)
-    ts_column = models.CharField(max_length=50,)
+    units = models.CharField(max_length=20, help_text="Unicode string. The units of measurement of this dimension (ex: Bar, C).")
+    datatype = models.CharField(max_length=10, choices=CASSANDRA_DATATYPE_CHOICES, help_text="Datatype of this dimension. May be "+str([choice[1] for choice in CASSANDRA_DATATYPE_CHOICES]))
+    ts_column = models.CharField(max_length=50, help_text="Name of the column in cassandra. I don't think this should be exposed in the API.")
     
     
     def __unicode__(self):
@@ -46,7 +46,7 @@ class BaseTemplate(ResearchObject):
         
     
 class Procedure(ResearchObject):
-    async_function = models.CharField(max_length=100)
+    async_function = models.CharField(max_length=100, help_text="Unicode string. The name of the asynchronous function that is used by this procedure.")
     
     class Meta:
         abstract = True
@@ -56,7 +56,7 @@ class Procedure(ResearchObject):
     
     
 class Aggregator(Procedure):
-    interval_in_seconds = models.IntegerField(default=2)
+    interval_in_seconds = models.IntegerField(default=2, help_text="Integer. The interval, in seconds, with which to aggregate.")
     
 
 class Calculator(Procedure):    

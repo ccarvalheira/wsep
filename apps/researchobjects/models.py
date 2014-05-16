@@ -5,9 +5,9 @@ from django.db import models
 
 
 class ResearchObject(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-    metadata = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=100, help_text="Unicode string data. The name of this resource.")
+    description = models.TextField(blank=True, null=True, help_text="Unicode string data. A human readable description of this resource.")
+    metadata = models.TextField(blank=True, null=True, help_text="Unicode string data. Machine readable metadata (JSON, for example) about this resource.")
     
     
     class Meta:
