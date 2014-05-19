@@ -106,10 +106,13 @@ class DatapointResource(Resource):
         columns = ",".join([str(i.ts_column) for i in idim_l])
         values = ",".join([str(i.input_value) for i in idim_l])
         bucket = dset.get_bucket_list()[-1]
+
+        #futures = []
         
         stmt = "insert into tsstore (bucket,dataset, %s) values (%s, %s, %s)" % (columns, bucket, dset.id, values)
         #raise Exception(stmt)
-        session.execute(stmt)
+        fut = session.execute(stmt)
+        #futures.append(fut)
         session.shutdown()
         try:
             is_update = bundle.data["update"]
@@ -128,6 +131,8 @@ class DatapointResource(Resource):
                     
         dset.datapoint_count += 1
         dset.save()
+        #for future in futures:
+        #    future.result()
         
     
 class BaseTemplateResource(ModelResource):
