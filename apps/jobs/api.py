@@ -100,6 +100,9 @@ class TaskResource(Resource):
     def get_object_list(self, request):
         return Task.objects.all()._clone()
     
+    def obj_get_list(self, bundle):
+        return Task.objects.all()._clone()
+    
     def dehydrate(self, bundle):
         bundle.data["status"] = bundle.obj.obj.completion()
         return bundle

@@ -115,7 +115,7 @@ class DatapointResource(Resource):
             is_update = bundle.data["update"]
         except KeyError:
             is_update = False
-        if True:
+        if False:
             for dim in idim_l:
                 if dim.ts_column == "time":
                     if not dset.highest_ts or dset.highest_ts > dim.input_value:

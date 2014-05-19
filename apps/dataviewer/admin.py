@@ -13,7 +13,7 @@ from apps.dataviewer.models import Filter
 from apps.jobs.models import Task
 
 class TaskAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('__unicode__','tasklet_count', 'done')
 
 class AggregatorAdmin(admin.ModelAdmin):
     pass
