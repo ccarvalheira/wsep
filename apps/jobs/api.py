@@ -22,6 +22,7 @@ from apps.wsadmin.models import CassandraNode
 from apps.wsadmin.models import GearmanNode
 
 from gearman import GearmanClient
+from django_statsd.clients import statsd
 import pickle
 
 class TaskUpdateResource(Resource):
@@ -42,6 +43,8 @@ class TaskUpdateResource(Resource):
         if obj.tasklet_count < 0:
             obj.tasklet_count = 0
         obj.save()
+        statsd.incr('task_completed')
+
         
         if obj.tasklet_count == 0:
             obj.done = True
