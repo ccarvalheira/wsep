@@ -127,9 +127,9 @@ class DatapointResource(Resource):
                         dset.lowest_ts = dim.input_value.strip("'")
                         dset.save()
                     break
-                    
-        dset.datapoint_count += 1
-        dset.save()
+        if not is_update:
+            dset.datapoint_count += 1
+            dset.save()
         #raise Exception(futures)
         for future in futures:
             future.result()
