@@ -83,6 +83,7 @@ urlpatterns = patterns('',
     url(r'api/doc/', include('tastypie_swagger.urls', namespace='tastypie_swagger')),
     #url(r'^upload/$', "apps.archives.api.upload_file"),
     url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),
+    url(r'^task_counter/', 'apps.jobs.views.task_counter')
     
     #url(r'^docs/', include('rest_framework_swagger.urls')),
 

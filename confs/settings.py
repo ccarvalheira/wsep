@@ -18,10 +18,12 @@ env.read_env(root('../.env'))
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+#DEBUG = env("DEBUG")
+DEBUG=True
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+APPEND_SLASH=True
 
 SITE_ID=1
 

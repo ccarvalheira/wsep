@@ -1,3 +1,5 @@
+import time
+
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 
@@ -15,6 +17,8 @@ from apps.dataviewer.models import Dimension
 from apps.wsadmin.models import CassandraNode
 
 from cassandra.cluster import Cluster
+
+from django_statsd.clients import statsd
 
 ####
 """ We define this here so SiteResource can use it. The real definition is below. """
@@ -89,7 +93,7 @@ class DatasetMetaResource(ModelResource):
         
         for d in bundle.data["dimensions"]:
             bundle.obj.dimensions.add(DimensionResource().get_via_uri(d, bundle.request))
-            bundle.obj.save()
+            #bundle.obj.save()
     
         bundle.obj.dimensions.add(Dimension.objects.get(ts_column="time"))
         
@@ -118,9 +122,13 @@ class DatasetMetaResource(ModelResource):
         bundle = self.build_bundle(obj=obj, request=request)
         bundle = self.full_dehydrate(bundle)
         #inserted here to display the datapoints for this particular dataset
-        bundle = self.dehydrant_detail(bundle)
+        try:
+            bundle.request.GET["no_points"]
+        except KeyError:
+            bundle = self.dehydrant_detail(bundle)
         ###
         bundle = self.alter_detail_data_to_serialize(request, bundle)
+        statsd.timing("dataset_detail_read_time", int((time.time()-bundle.request._start_time)*1000))
         return self.create_response(request, bundle)
     
     def hydrate(self, bundle):
@@ -184,15 +192,21 @@ class DatasetMetaResource(ModelResource):
             filters["site"] = str(site_obj.id)
         except KeyError:
             pass
+
         ###
         applicable_filters = self.build_filters(filters=filters)
+        
 
         try:
             objects = self.apply_filters(bundle.request, applicable_filters)
             return self.authorized_read_list(objects, bundle)
         except ValueError:
             raise BadRequest("Invalid resource lookup data provided (mismatched type).")
-              
+
+    def dehydrate(self, bundle):
+        statsd.timing("dataset_list_read_time", int((time.time()-bundle.request._start_time)*1000))
+        return bundle
+                  
 
 class DeviceResource(ModelResource):
     datasets = fields.ManyToManyField(DatasetMetaResource, "dataset_set", null=True)

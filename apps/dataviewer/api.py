@@ -24,6 +24,8 @@ import string
 
 from cassandra.cluster import Cluster
 
+from django_statsd.clients import statsd
+
 
 class DimensionResource(ModelResource):
     class Meta:
@@ -50,7 +52,7 @@ class DimensionResource(ModelResource):
                 bundle.obj.datatype = c[0]
                 break        
         
-        bundle.obj.save()
+        #bundle.obj.save()
         #bundle.obj.ts_column = "c"+str(bundle.obj.id)
         bundle.obj.ts_column = bundle.obj.name.lower()
         bundle.obj.save()
@@ -134,6 +136,7 @@ class DatapointResource(Resource):
         for future in futures:
             future.result()
         session.shutdown()
+        statsd.gauge("test_signal",random.choice(range(20)))
 
         
     

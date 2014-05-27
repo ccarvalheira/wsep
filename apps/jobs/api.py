@@ -35,20 +35,24 @@ class TaskUpdateResource(Resource):
         obj = Task.objects.get(id=bundle.data["id"])
         try:
             obj.tasklet_count += bundle.data["increment"]
+            #statsd.gauge('outstanding_tasks', bundle.data["increment"], delta=True)
+
         except KeyError:
             try:
                 obj.tasklet_count -= bundle.data["decrement"]
+                #statsd.gauge('outstanding_tasks', -bundle.data["decrement"], delta=True)
+
             except KeyError:
                 pass
         if obj.tasklet_count < 0:
             obj.tasklet_count = 0
         obj.save()
-        statsd.incr('task_completed')
 
         
         if obj.tasklet_count == 0:
             obj.done = True
             obj.save()
+            #statsd.gauge('outstanding_tasks', -1, delta=True)
             try:
                 new_task = obj.task_set.all()[0]
                 new_dataset = DatasetMetaResource().get_via_uri(new_task.output_dataset, bundle.request)
@@ -56,7 +60,7 @@ class TaskUpdateResource(Resource):
                 new_dataset.highest_ts = old_dataset.highest_ts
                 new_dataset.lowest_ts = old_dataset.lowest_ts
                 new_dataset.save()
-                
+
                 
             except IndexError:
                 #no more tasks to schedule
@@ -64,8 +68,8 @@ class TaskUpdateResource(Resource):
             dat = {}
             dat["task"] = new_task.procedure_url
             dat["task_id"] = new_task.id
-            dat["output_dataset"] = new_task.output_dataset
-            dat["input_dataset"] = new_task.input_dataset
+            dat["output_dataset"] = new_task.output_dataset+"?no_points=True"
+            dat["input_dataset"] = new_task.input_dataset+"?no_points=True"
             dat["cassandra_nodes"] = CassandraNode.get_nodeip_list()
             client = GearmanClient(GearmanNode.get_nodeip_list())
             client.submit_job("pre_schedule", pickle.dumps(dat),background=True) 
@@ -156,7 +160,10 @@ class TaskResource(Resource):
                                 input_dataset=bundle.data["output_dataset"], output_dataset=bundle.data["output_dataset"])
             temp_task.save()
             parent_task = temp_task
-        
+            #statsd.gauge('outstanding_tasks', 1, delta=True)
+
+        #statsd.gauge('outstanding_tasks', 1, delta=True)
+
         #now that we've created the dependency chain, we will schedule the first task
         dat = {}
         dat["task"] = bundle.data["ordered_tasks"][0]
