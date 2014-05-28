@@ -33,19 +33,25 @@ class TaskUpdateResource(Resource):
     def obj_create(self, bundle, **kwargs):
         #raise Exception(bundle.data)
         obj = Task.objects.get(id=bundle.data["id"])
+        new_count = 0
         try:
-            obj.tasklet_count += bundle.data["increment"]
+            #obj.tasklet_count += bundle.data["increment"]
             #statsd.gauge('outstanding_tasks', bundle.data["increment"], delta=True)
-
+            new_count = obj.tasklet_count + bundle.data["increment"]
         except KeyError:
             try:
-                obj.tasklet_count -= bundle.data["decrement"]
+                #obj.tasklet_count -= bundle.data["decrement"]
                 #statsd.gauge('outstanding_tasks', -bundle.data["decrement"], delta=True)
+                new_count = obj.tasklet_count - bundle.data["decrement"]
 
             except KeyError:
                 pass
-        if obj.tasklet_count < 0:
+        if  new_count <= 0 and obj.tasklet_count > 0:
             obj.tasklet_count = 0
+            obj.save()
+            #we already scheduled the next procedure
+            return
+        obj.tasklet_count = new_count
         obj.save()
 
         
@@ -68,8 +74,8 @@ class TaskUpdateResource(Resource):
             dat = {}
             dat["task"] = new_task.procedure_url
             dat["task_id"] = new_task.id
-            dat["output_dataset"] = new_task.output_dataset+"?no_points=True"
-            dat["input_dataset"] = new_task.input_dataset+"?no_points=True"
+            dat["output_dataset"] = new_task.output_dataset#+"?no_points=True"
+            dat["input_dataset"] = new_task.input_dataset#+"?no_points=True"
             dat["cassandra_nodes"] = CassandraNode.get_nodeip_list()
             client = GearmanClient(GearmanNode.get_nodeip_list())
             client.submit_job("pre_schedule", pickle.dumps(dat),background=True) 
