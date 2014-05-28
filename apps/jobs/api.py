@@ -46,7 +46,7 @@ class TaskUpdateResource(Resource):
 
             except KeyError:
                 pass
-        if  new_count <= 0 and obj.tasklet_count > 0:
+        if  new_count <= 0 and obj.tasklet_count == 0:
             obj.tasklet_count = 0
             obj.save()
             #we already scheduled the next procedure
