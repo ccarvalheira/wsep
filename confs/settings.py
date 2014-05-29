@@ -10,6 +10,9 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import environ
+
+from cassandra.cluster import Cluster
+
 root = environ.Path(__file__) -1
 env = environ.Env(DEBUG=(bool, False), DATABASE_URL=(str, "sqlite:////"+root("../")+"/ws_scalable.db"))
 env.read_env(root('../.env'))
@@ -19,7 +22,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = env("DEBUG")
-DEBUG=True
+DEBUG=False
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*']
@@ -108,6 +111,9 @@ DATABASES = {
 	'default': env.db('DATABASE_URL'),
 	'triple': env.db('TRIPLE_DB_URL'),
 }
+
+CASSANDRA_CLUSTER = Cluster(["127.0.0.1"])
+CASSANDRA_SESSION = CASSANDRA_CLUSTER.connect("ws")
 
 
 # Internationalization

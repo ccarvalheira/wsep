@@ -18,6 +18,8 @@ from apps.wsadmin.models import CassandraNode
 
 from cassandra.cluster import Cluster
 
+from django.conf import settings
+
 from django_statsd.clients import statsd
 
 ####
@@ -151,13 +153,9 @@ class DatasetMetaResource(ModelResource):
         
         stmt = "select %s, dataset, bucket from tsstore where dataset=%s and bucket in (%s) and time >= %s and time < %s order by dataset, time;" % (columns, bundle.obj.id, bundle.obj.get_str_bucket_list(), lower_time, upper_time)
         
-        node_list = CassandraNode.get_nodeip_list()
-        cluster = Cluster(node_list)
-        session = cluster.connect('ws')
-        
+        session = settings.CASSANDRA_SESSION
         datapoints = session.execute(stmt)
         
-        session.shutdown()
         rows = []
         for d in datapoints:
             dic = {}

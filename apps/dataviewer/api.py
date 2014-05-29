@@ -24,6 +24,8 @@ import string
 
 from cassandra.cluster import Cluster
 
+from django.conf import settings
+
 from django_statsd.clients import statsd
 
 
@@ -58,11 +60,8 @@ class DimensionResource(ModelResource):
         bundle.obj.save()
         
         stmt = "alter table tsstore add %s %s;" % (bundle.obj.ts_column, bundle.obj.datatype)
-        node_list = CassandraNode.get_nodeip_list()
-        cluster = Cluster(node_list)
-        session = cluster.connect('ws')
+        session = settings.CASSANDRA_SESSION
         session.execute(stmt)
-        session.shutdown()
         
         return bundle.obj
 
@@ -98,13 +97,9 @@ class DatapointResource(Resource):
         #for d in dset_dims:
         #    if d not in idim_l:
         #        raise Exception("not enough input dims")
-        node_list = CassandraNode.get_nodeip_list()
-        try:
-            cluster = Cluster(node_list)
-        except Exception:
-            time.sleep(1)
-            cluster = Cluster(node_list)
-        session = cluster.connect('ws')
+
+        session = settings.CASSANDRA_SESSION
+
         columns = ",".join([str(i.ts_column) for i in idim_l])
         values = ",".join([str(i.input_value) for i in idim_l])
         bucket = dset.get_bucket_list()[-1]
@@ -135,7 +130,6 @@ class DatapointResource(Resource):
         #raise Exception(futures)
         for future in futures:
             future.result()
-        session.shutdown()
         statsd.gauge("test_signal",random.choice(range(20)))
 
         
