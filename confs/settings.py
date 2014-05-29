@@ -68,6 +68,8 @@ INSTALLED_APPS = (
 
 TASTYPIE_SWAGGER_API_MODULE = 'confs.urls.v1_api'
 
+CONN_MAX_AGE = 20
+
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
 AUTH_USER_MODEL = "wsusers.WSUser"
 
